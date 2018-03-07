@@ -1,6 +1,6 @@
 # finance-manager
 
-from datatime import datetime
+from datetime import datetime
 import json
 import click
 import os
@@ -63,8 +63,15 @@ def out_balance(name):
         response = requests.get(BASE_URL)
         soup = BeautifulSoup(response.content, 'html.parser')
         currency_rates = json.loads(str(soup))
+        heading_balance = []
         for i in currency_rates:
-            print(information["current_balance"] / float(i["buy"]))
+            currency = i["ccy"]
+            rate = i["buy"]
+            bal = information["current_balance"] / float(i["buy"])
+            heading_balance.append([str(currency), str(bal), str(rate)])
+        headings = [["Currency", "Balance", "Exchange rate"]] + heading_balance
+        balance = AsciiTable(headings)
+        print(balance.table)
 
 
 @click.command()

@@ -65,13 +65,10 @@ def out_balance(name):
         currency_rates = json.loads(str(soup))
         heading_balance = []
         for i in currency_rates:
-            currency = i["ccy"]
-            rate = i["buy"]
             bal = information["current_balance"] / float(i["buy"])
-            heading_balance.append([str(currency), str(bal), str(rate)])
+            heading_balance.append([i["ccy"], bal, i["buy"]])
         headings = [["Currency", "Balance", "Exchange rate"]] + heading_balance
-        balance = AsciiTable(headings)
-        print(balance.table)
+        print(AsciiTable(headings).table)
 
 
 @click.command()

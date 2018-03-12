@@ -1,7 +1,7 @@
 # finance-manager
 
 from datetime import datetime
-from constans import BASE_URL, BASE_DIR, FILE_TMP
+from constans import RATES_API, OUTPUT_DIR, FILE_TMP
 from bs4 import BeautifulSoup
 from terminaltables import AsciiTable
 import json
@@ -58,7 +58,7 @@ def out_balance(name):
         raise Exception(f'This {name}.txt is missing')
     with open(FILE_TMP.format(name), 'r') as f_in:
         information = json.load(f_in)
-        response = requests.get(BASE_URL)
+        response = requests.get(RATES_API)
         soup = BeautifulSoup(response.content, 'html.parser')
         currency_rates = json.loads(str(soup))
         heading_balance = []
@@ -76,8 +76,8 @@ def out_balance(name):
 @click.option('--history', is_flag=True)
 @click.option('--balance', is_flag=True)
 def click_command(income, costs, name, history, balance):
-    if not os.path.isdir(BASE_DIR):
-        os.makedirs(BASE_DIR)
+    if not os.path.isdir(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
     if income:
         input_income(name, income)
     elif costs:

@@ -1,20 +1,18 @@
 # finance-manager
 
 from datetime import datetime
+from constans import BASE_URL, BASE_DIR, FILE_TMP
+from bs4 import BeautifulSoup
+from terminaltables import AsciiTable
 import json
 import click
 import os
 import requests
-from bs4 import BeautifulSoup
-from terminaltables import AsciiTable
-
-
-BASE_URL = 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5'
 
 
 def input_income(name, income):
-    if os.path.isfile(f'{name}.txt'):
-        with open(f'{name}.txt', 'r') as f_in:
+    if os.path.isfile(FILE_TMP.format(name)):
+        with open(FILE_TMP.format(name), 'r') as f_in:
             information = json.load(f_in)
     else:
         information = {
@@ -24,13 +22,13 @@ def input_income(name, income):
     information["current_balance"] += int(income)
     information["history"].append((int(income), datetime.now().isoformat()))
 
-    with open(f'{name}.txt', 'w') as f_out:
+    with open(FILE_TMP.format(name), 'w') as f_out:
         json.dump(information, f_out)
 
 
 def input_costs(name, costs):
-    if os.path.isfile(f'{name}.txt'):
-        with open(f'{name}.txt', 'r') as f_in:
+    if os.path.isfile(FILE_TMP.format(name)):
+        with open(FILE_TMP.format(name), 'r') as f_in:
             information = json.load(f_in)
     else:
         information = {
@@ -40,15 +38,15 @@ def input_costs(name, costs):
     information["current_balance"] -= int(costs)
     information["history"].append((-int(costs), datetime.now().isoformat()))
 
-    with open(f'{name}.txt', 'w') as f_out:
+    with open(FILE_TMP.format(name), 'w') as f_out:
         json.dump(information, f_out)
 
 
 def out_history(name):
-    if not os.path.isfile(f'{name}.txt'):
+    if not os.path.isfile(FILE_TMP.format(name)):
         raise Exception(f'This {name}.txt is missing')
 
-    with open(f'{name}.txt', 'r') as f_in:
+    with open(FILE_TMP.format(name), 'r') as f_in:
         information = json.load(f_in)
         heading = [['Balance', 'Data']] + information["history"]
         history = AsciiTable(heading)
@@ -56,9 +54,9 @@ def out_history(name):
 
 
 def out_balance(name):
-    if not os.path.isfile(f'{name}.txt'):
+    if not os.path.isfile(FILE_TMP.format(name)):
         raise Exception(f'This {name}.txt is missing')
-    with open(f'{name}.txt', 'r') as f_in:
+    with open(FILE_TMP.format(name), 'r') as f_in:
         information = json.load(f_in)
         response = requests.get(BASE_URL)
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -78,6 +76,8 @@ def out_balance(name):
 @click.option('--history', is_flag=True)
 @click.option('--balance', is_flag=True)
 def click_command(income, costs, name, history, balance):
+    if not os.path.isdir(BASE_DIR):
+        os.makedirs(BASE_DIR)
     if income:
         input_income(name, income)
     elif costs:

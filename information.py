@@ -1,8 +1,5 @@
 from collections import namedtuple
-from constans import RATES_API, OUTPUT_DIR, FILE_TMP
 from models import OsModel
-import json
-import os
 
 History = namedtuple('History', ['income', 'datetime'])
 

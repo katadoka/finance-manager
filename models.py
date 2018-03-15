@@ -1,12 +1,15 @@
-import requests
-from bs4 import BeautifulSoup
-
-from constans import RATES_API, OUTPUT_DIR, FILE_TMP
 import json
 import os
 
+import requests
+from bs4 import BeautifulSoup
+
 
 class OsModel:
+
+    RATES_API = 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5'
+    OUTPUT_DIR = 'output'
+    FILE_TMP = os.path.join(OUTPUT_DIR, '{}.txt')
 
     @staticmethod
     def _check_directory():

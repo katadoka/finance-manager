@@ -1,25 +1,9 @@
 # finance-manager
 
 import click
-from terminaltables import AsciiTable
 
 from controllers import FinanceManagerController
-from models import CurrencyRatesModel
-
-
-def out_history(name):
-    heading = [['Balance', 'Data']] + FinanceManagerController(name).history
-    history = AsciiTable(heading)
-    print(history.table)
-
-
-def out_balance(name):
-    ctrl = FinanceManagerController(name)
-    rates = CurrencyRatesModel.get_rates()
-
-    content = [["Currency", "Balance", "Exchange rate"]] + ctrl.balance(rates)
-    print(AsciiTable(content).table)
-
+from views import AsciiTableView
 
 @click.command()
 @click.option('--income')
@@ -33,9 +17,9 @@ def click_command(income, costs, name, history, balance):
     elif costs:
         FinanceManagerController(name).update_balance(-int(costs))
     elif history:
-        out_history(name)
+        AsciiTableView(name).history()
     elif balance:
-        out_balance(name)
+        AsciiTableView(name).balance()
 
 if __name__ == '__main__':
     click_command()

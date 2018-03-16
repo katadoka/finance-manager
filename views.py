@@ -4,7 +4,7 @@ from terminaltables import AsciiTable
 from controllers import FinanceManagerController
 
 
-class AsciiTableView:
+class AsciiTableView:   
 
     def __init__(self, name):
         self.ctrl = FinanceManagerController(name)

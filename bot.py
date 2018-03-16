@@ -2,7 +2,7 @@ import telebot
 
 import config
 from controllers import FinanceManagerController
-from views import AsciiTableView
+from views import TelegramView
 
 
 bot = telebot.TeleBot(config.token)
@@ -12,14 +12,17 @@ bot = telebot.TeleBot(config.token)
 def repeat_all_messages(message): 
     command =  message.text.split()
     name = message.chat.id
-    if command[0] == 'income':
-        FinanceManagerController(name).update_balance(int(command[1]))
-    elif command[0] == 'costs':
-        FinanceManagerController(name).update_balance(-int(command[1]))
-    elif command[0] == 'history':
-        AsciiTableView(name).history()
-    elif command[0] == 'balance':
-        AsciiTableView(name).balance()
+    if command[0] in ['history', 'h']:
+        TelegramView(name).history()
+    elif command[0] in ['balance', 'b']:
+        TelegramView(name).balance()
+    else:
+        try:
+            amount = int(command[0])
+            FinanceManagerController(name).update_balance(amount)
+        except ValueError:
+            TelegramView(name).message(
+                "Wrong choise. Valid values: balance, b, history, h, <number>")
 
 if __name__ == '__main__':
     bot.polling(none_stop=True)

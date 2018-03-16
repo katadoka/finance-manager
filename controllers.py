@@ -1,5 +1,6 @@
 from information import History, Information
 from datetime import datetime
+from models import CurrencyRatesModel
 
 
 class FinanceManagerController:
@@ -11,9 +12,9 @@ class FinanceManagerController:
     def history(self):
         return self.information.history
 
-    def balance(self, rates):
+    def balance(self):
         content = []
-        for i in rates:
+        for i in CurrencyRatesModel.get_rates():
             bal = self.information.current_balance / float(i["buy"])
             content.append([i["ccy"], bal, i["buy"]])
         return [["UAH", self.information.current_balance, 1]] + content

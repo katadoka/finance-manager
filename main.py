@@ -5,6 +5,7 @@ import click
 from controllers import FinanceManagerController
 from views import AsciiTableView
 
+
 @click.command()
 @click.option('--income')
 @click.option('--costs')

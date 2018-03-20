@@ -9,8 +9,8 @@ bot = telebot.TeleBot(config.token)
 
 
 @bot.message_handler(content_types=["text"])
-def repeat_all_messages(message): 
-    command =  message.text.split()
+def repeat_all_messages(message):
+    command = message.text.split()
     name = message.chat.id
     if command[0] in ['history', 'h']:
         TelegramView(name).history()

@@ -5,11 +5,10 @@ import config
 from controllers import FinanceManagerController
 
 
-class AsciiTableView:   
+class AsciiTableView:
 
     def __init__(self, name):
         self.ctrl = FinanceManagerController(name)
-
 
     def history(self):
         heading = [['Balance', 'Data']] + self.ctrl.history
@@ -19,6 +18,7 @@ class AsciiTableView:
     def balance(self):
         content = [["Currency", "Balance", "Exchange rate"]] + self.ctrl.balance()
         print(AsciiTable(content).table)
+
 
 class TelegramView:
 
@@ -30,10 +30,24 @@ class TelegramView:
     def message(self, text):
         self.bot.send_message(self.name, text)
 
+    def view_massage_history(heading):
+        history = []
+        for e in heading:
+            history.append(f'{e[0]}: {e[1]}')
+        return history
+
+    def view_massage_balance(content):
+        balance = []
+        for e in content:
+            balance.append(f'{e[0]}({e[2]}): {e[1]}')
+        return balance
+
     def history(self):
         heading = [['Balance', 'Data']] + self.ctrl.history
-        self.message(heading)
+        history = view_massage_history(heading)
+        self.message('\n'.join(history))
 
     def balance(self):
         content = [["Currency", "Balance", "Exchange rate"]] + self.ctrl.balance()
-        self.message('\n'.join([f'{e[0]}({e[2]}): {e[1]}' for e in content]))
+        balance = view_massage_balance(content)
+        self.message('\n'.join(balance))

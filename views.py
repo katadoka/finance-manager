@@ -30,24 +30,19 @@ class TelegramView:
     def message(self, text):
         self.bot.send_message(self.name, text)
 
-    def view_massage_history(heading):
-        history = []
-        for e in heading:
-            history.append(f'{e[0]}: {e[1]}')
-        return history
-
-    def view_massage_balance(content):
-        balance = []
+    @staticmethod
+    def build_massage(content, tmp='{e[0]}: {e[1]}'):
+        massage_content = []
         for e in content:
-            balance.append(f'{e[0]}({e[2]}): {e[1]}')
-        return balance
+            massage_content.append(tmp.format(e=e))
+        return massage_content
 
     def history(self):
-        heading = [['Balance', 'Data']] + self.ctrl.history
-        history = view_massage_history(heading)
+        content = [['Balance', 'Data']] + self.ctrl.history
+        history = TelegramView.build_massage(content)
         self.message('\n'.join(history))
 
     def balance(self):
         content = [["Currency", "Balance", "Exchange rate"]] + self.ctrl.balance()
-        balance = view_massage_balance(content)
+        balance = TelegramView.build_massage(content, tmp='{e[0]}({e[2]}): {e[1]}')
         self.message('\n'.join(balance))

@@ -21,7 +21,7 @@ def repeat_all_messages(message):
             amount = int(command[0])
             FinanceManagerController(name).update_balance(amount)
         except ValueError:
-            TelegramView(name).message(
+            TelegramView(name).send_message(
                 "Wrong choise. Valid values: balance, b, history, h, <number>")
 
 if __name__ == '__main__':

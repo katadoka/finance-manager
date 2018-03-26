@@ -22,27 +22,32 @@ class AsciiTableView:
 
 class TelegramView:
 
+    HISTORY_HEADERS = [['Balance', 'Data']]
+    BALANCE_HEADERS = [["Currency", "Balance", "Exchange rate"]]
+    BALANCE_TMP = '{e[0]}({e[2]}): {e[1]}'
+    HISTORY_TMP = '{e[0]}: {e[1]}'
+
     def __init__(self, name):
         self.ctrl = FinanceManagerController(name)
         self.bot = telebot.TeleBot(config.token)
         self.name = name
+        self.text = None
 
-    def message(self, text):
-        self.bot.send_message(self.name, text)
+    def send_message(self, text=None):
+        message_text = text if text else self.text
+        self.bot.send_message(self.name, message_text)
 
-    @staticmethod
-    def build_massage(content, tmp='{e[0]}: {e[1]}'):
-        massage_content = []
+    def build_message(self, headers, his_bal, tmp):
+        message_content = []
+        content = headers + his_bal
         for e in content:
-            massage_content.append(tmp.format(e=e))
-        return massage_content
+            message_content.append(tmp.format(e=e))
+        self.text = '\n'.join(message_content)
 
     def history(self):
-        content = [['Balance', 'Data']] + self.ctrl.history
-        history = TelegramView.build_massage(content)
-        self.message('\n'.join(history))
+        self.build_message(TelegramView.HISTORY_HEADERS, self.ctrl.history, TelegramView.HISTORY_TMP)
+        self.send_message()
 
     def balance(self):
-        content = [["Currency", "Balance", "Exchange rate"]] + self.ctrl.balance()
-        balance = TelegramView.build_massage(content, tmp='{e[0]}({e[2]}): {e[1]}')
-        self.message('\n'.join(balance))
+        self.build_message(TelegramView.BALANCE_HEADERS, self.ctrl.balance(), TelegramView.BALANCE_TMP)
+        self.send_message()

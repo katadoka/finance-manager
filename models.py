@@ -46,26 +46,3 @@ class CurrencyRatesModel:
         soup = BeautifulSoup(response.content, 'html.parser')
         rates = json.loads(str(soup))
         return rates
-
-
-# class DBModel(Model):
-
-#     DB = 'finance-manager.db'
-
-#     name = CharField()
-#     current_balance = IntegerField()
-#     history = CharField()
-
-#     class Meta:
-#         database = SqliteDatabase(DB)
-
-#     @staticmethod
-#     def load(name):
-#         c = SqliteDatabase(DB).cursor()
-#         c.execute(SELECT name FROM sqlite_master WHERE type='table' AND name='{finance_manager}')
-        
-#         pass
-
-#     @staticmethod
-#     def save(name, current_balance, history):
-#         pass

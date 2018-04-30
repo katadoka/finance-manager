@@ -20,6 +20,7 @@ class FinanceManagerController:
         return [["UAH", self.information.current_balance, 1]] + content
 
     def update_balance(self, income):
+        self.information.amount = int(income)
         self.information.current_balance += int(income)
         history = History(int(income), datetime.now().isoformat())
         self.information.history.append(history)

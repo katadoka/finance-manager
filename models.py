@@ -6,6 +6,45 @@ from bs4 import BeautifulSoup
 
 import sqlite3
 from peewee import *
+from datetime import datetime
+
+from modelsorm import User, Amount
+
+
+class CurrencyRatesModel:
+
+    RATES_API = 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5'
+
+    @staticmethod
+    def get_rates():
+        response = requests.get(CurrencyRatesModel.RATES_API)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        rates = json.loads(str(soup))
+        return rates
+
+
+class DBModel:
+
+    @staticmethod
+    def load(name):
+        User.get_or_create(username=name)
+        query = (Amount
+                .select(Amount.user_id, Amount.amount, Amount.date_time)
+                .where(Amount.user_id == name)
+                .order_by(Amount.date_time))
+        information_history = []
+        current_balance = 0
+        for row in query:
+            information_history.append([row.amount, row.date_time])
+            current_balance += row.amount
+        return current_balance, information_history
+
+
+    @staticmethod
+    def save(information):
+        Amount.get_or_create(user_id=information.name, 
+            amount=information.amount, date_time=datetime.now().isoformat())
+
 
 class OsModel:
 
@@ -29,20 +68,8 @@ class OsModel:
         return information['current_balance'], information['history']
 
     @staticmethod
-    def save(name, current_balance, history):
+    def save(information):
         OsModel._check_directory()
-        information = {"current_balance": current_balance, "history": history}
-        with open(OsModel.FILE_TMP.format(name), 'w') as f_out:
-            json.dump(information, f_out)
-
-
-class CurrencyRatesModel:
-
-    RATES_API = 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5'
-
-    @staticmethod
-    def get_rates():
-        response = requests.get(CurrencyRatesModel.RATES_API)
-        soup = BeautifulSoup(response.content, 'html.parser')
-        rates = json.loads(str(soup))
-        return rates
+        information_dict = {"current_balance": information.current_balance, "history": information.history}
+        with open(OsModel.FILE_TMP.format(information.name), 'w') as f_out:
+            json.dump(information_dict, f_out)

@@ -1,5 +1,5 @@
 import sqlite3
-from peewee import *
+from peewee import Model, SqliteDatabase, AutoField, CharField, ForeignKeyField
 from datetime import datetime
 
 

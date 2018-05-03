@@ -5,8 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 
 import sqlite3
-from peewee import *
 from datetime import datetime
+from peewee import fn
 
 from modelsorm import User, Amount
 
@@ -29,8 +29,8 @@ class DBModel:
     def load(name):
         User.get_or_create(username=name)
         query = (Amount
-                .select(Amount.user_id, Amount.amount, Amount.date_time)
-                .where(Amount.user_id == name)
+                .select(Amount.user, Amount.amount, Amount.date_time)
+                .where(Amount.user == name)
                 .order_by(Amount.date_time))
         information_history = []
         current_balance = 0
@@ -42,7 +42,7 @@ class DBModel:
 
     @staticmethod
     def save(information):
-        Amount.get_or_create(user_id=information.name, 
+        Amount.get_or_create(user=information.name, 
             amount=information.amount, date_time=datetime.now().isoformat())
 
 

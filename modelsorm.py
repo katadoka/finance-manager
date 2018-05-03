@@ -1,5 +1,5 @@
 import sqlite3
-from peewee import Model, SqliteDatabase, AutoField, CharField, ForeignKeyField
+from peewee import Model, SqliteDatabase, DateTimeField, ForeignKeyField, FloatField, CharField
 from datetime import datetime
 
 
@@ -16,9 +16,9 @@ class User(Model):
 
 
 class Amount(Model):
-    user_id = ForeignKeyField(User, backref='amount')
-    amount = AutoField()
-    date_time = CharField()
+    user = ForeignKeyField(User, backref='amount')
+    amount = FloatField()
+    date_time = DateTimeField()
 
 
     class Meta:
